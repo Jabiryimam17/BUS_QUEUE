@@ -9,7 +9,7 @@ dotenv.config();
 // - ADMIN_APP_PASSWORD
 
 const adminEmail = process.env.ADMIN_EMAIL;
-const adminPassword = process.env.ADMIN_APP_PASSWORD;
+const adminPassword = process.env.APP_PASSWORD;
 
 if (!adminEmail || !adminPassword) {
   console.warn(

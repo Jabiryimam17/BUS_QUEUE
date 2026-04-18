@@ -7,9 +7,13 @@ const BACKEND_ORIGIN =
 
 const API_BASE = `${String(BACKEND_ORIGIN).replace(/\/+$/, '')}/api`;
 
-export const build_upload_url = (relative_path) => {
-  if (!relative_path) return null;
-  return `${String(BACKEND_ORIGIN).replace(/\/+$/, '')}/uploads/${relative_path}`;
+export const build_upload_url = (stored_path) => {
+  if (!stored_path) return null;
+  const s = String(stored_path).trim();
+  if (/^https?:\/\//i.test(s)) {
+    return s;
+  }
+  return `${String(BACKEND_ORIGIN).replace(/\/+$/, '')}/uploads/${s.replace(/^\/+/, '')}`;
 };
 
 const get_token = () => {

@@ -3,17 +3,18 @@ const { body } = require('express-validator');
 const AuthController = require('../controllers/auth_controller');
 const { authenticate } = require('../middleware/auth_middleware');
 const validate = require('../middleware/validation_middleware');
-const upload = require('../configs/upload');
+const { send_error } = require('../utils/response');
+const upload = require('../configs/cloudinary');
 
 const router = express.Router();
-
+const multi_upload = upload.fields([
+  { name: 'face_photo', maxCount: 1 },
+  { name: 'id_photo', maxCount: 1 }
+]);
 // Register route with file upload
 router.post(
   '/register',
-  upload.fields([
-    { name: 'face_photo', maxCount: 1 },
-    { name: 'id_photo', maxCount: 1 }
-  ]),
+  multi_upload,
   [
     body('university_id').notEmpty().withMessage('University ID is required'),
     body('name').notEmpty().withMessage('Name is required'),
@@ -23,11 +24,14 @@ router.post(
   ],
   validate,
   (req, res) => {
-    // Add file paths to body (relative to uploads folder)
-    if (req.files) {
-      req.body.face_photo_path = req.files.face_photo ? req.files.face_photo[0].filename : null;
-      req.body.id_photo_path = req.files.id_photo ? req.files.id_photo[0].filename : null;
+    const face = req.files?.face_photo?.[0];
+    const id_card = req.files?.id_photo?.[0];
+    if (!face || !id_card) {
+      return send_error(res, 'Face photo and ID photo are required', 400);
     }
+    // multer-storage-cloudinary sets path to secure_url
+    req.body.face_photo_path = face.path;
+    req.body.id_photo_path = id_card.path;
     AuthController.register(req, res);
   }
 );

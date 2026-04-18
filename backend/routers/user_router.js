@@ -1,7 +1,7 @@
 const express = require('express');
 const UserController = require('../controllers/user_controller');
 const { authenticate, authorize_admin } = require('../middleware/auth_middleware');
-const upload = require('../configs/upload');
+const upload = require('../configs/cloudinary');
 
 const router = express.Router();
 
@@ -29,13 +29,12 @@ router.put(
     { name: 'id_photo', maxCount: 1 }
   ]),
   (req, res) => {
-    // Add file paths to body (relative to uploads folder)
     if (req.files) {
-      if (req.files.face_photo) {
-        req.body.face_photo_path = req.files.face_photo[0].filename;
+      if (req.files.face_photo?.[0]) {
+        req.body.face_photo_path = req.files.face_photo[0].path;
       }
-      if (req.files.id_photo) {
-        req.body.id_photo_path = req.files.id_photo[0].filename;
+      if (req.files.id_photo?.[0]) {
+        req.body.id_photo_path = req.files.id_photo[0].path;
       }
     }
     UserController.update_my_profile(req, res);
