@@ -14,12 +14,19 @@ const user_router = require('./routers/user_router');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-
+const cors_options = {
+  origin: 'https://bus-queue.vercel.app', // Your specific frontend URL
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 200 // Some legacy browsers/Vercel setups prefer 200 over 204
+};
 // Middleware
-app.use(cors());
+app.use(cors(cors_options));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+app.options("*", cors(cors_options));
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
