@@ -1,6 +1,6 @@
 const { Pool } = require('pg');
 const dotenv = require('dotenv');
-dotenv.config({path:"./../.env"});
+dotenv.config();
 let pool = null;
 const create_pool = () => {
   if (!pool) {
@@ -14,8 +14,8 @@ const create_pool = () => {
       port: Number(process.env.DB_PORT) || 5432,
       max: Number(process.env.DB_POOL_MAX) || 10,
       idleTimeoutMillis: Number(process.env.DB_POOL_IDLE_TIMEOUT_MS) || 30000,
-      connectionTimeoutMillis: Number(process.env.DB_POOL_CONNECTION_TIMEOUT_MS) || 2000,
-      ssl: { rejectUnauthorized: process.env.SSL_MODE !== 'require' }
+      connectionTimeoutMillis: Number(process.env.DB_POOL_CONNECTION_TIMEOUT_MS) || 10000,
+      ssl: { rejectUnauthorized: false }
     });
   }
   return pool;
